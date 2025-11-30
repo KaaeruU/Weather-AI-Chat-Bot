@@ -1,0 +1,11 @@
+{
+  "name": "weather-bot",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-04-01",
+
+  // ADD THIS LINE using the ID you just found:
+
+  "ai": {
+    "binding": "ai"
+  }
+}
