@@ -1,5 +1,10 @@
 import { Hono } from "hono";
-import { stepCountIs, streamText, type CoreMessage } from "ai";
+import {
+  stepCountIs,
+  streamText,
+  convertToCoreMessages,
+  convertToModelMessages,
+} from "ai";
 import type { Env } from "../types/types";
 import { getModel, WEATHER_BOT_SYSTEM_PROMPT } from "../lib/ai-provider";
 import { geocodeTool } from "../tools/geocode";
@@ -8,7 +13,6 @@ import { forecastTool } from "../tools/forecast";
 const chat = new Hono<{ Bindings: Env }>();
 
 chat.post("/message", async (c) => {
-  //log id
   const requestId = crypto.randomUUID().slice(0, 8);
 
   let body;
@@ -18,27 +22,20 @@ chat.post("/message", async (c) => {
     return c.json({ error: "Invalid JSON" }, 400);
   }
 
-  const message = body.message || "";
+  const uiMessages = body.messages || [];
 
-  console.log(`\n🆔 [${requestId}] START: "${message}"`);
+  if (!Array.isArray(uiMessages) || uiMessages.length === 0) {
+    return c.json({ error: "No messages provided" }, 400);
+  }
 
-  const rawHistory = Array.isArray(body.history) ? body.history : [];
+  const messages = convertToCoreMessages(uiMessages);
 
-  const historyMessages: CoreMessage[] = rawHistory.map((msg: any) => {
-    return {
-      role: msg.role || "user",
-      content: msg.content || "",
-      ...(msg.tool_calls && { tool_calls: msg.tool_calls }),
-      ...(msg.tool_call_id && { tool_call_id: msg.tool_call_id }),
-      ...(msg.name && { name: msg.name }),
-    } as CoreMessage;
-  });
-
-  // clean array
-  const allMessages: CoreMessage[] = [
-    ...historyMessages,
-    { role: "user", content: message },
-  ];
+  const lastMessage = uiMessages[uiMessages.length - 1];
+  console.log(
+    `\n🆔 [${requestId}] START: "${
+      lastMessage.content || lastMessage.parts?.[0]?.text || ""
+    }"`
+  );
 
   const model = getModel(c.env.ai);
   const today = new Date().toLocaleDateString("it-IT", { weekday: "long" });
@@ -47,13 +44,14 @@ chat.post("/message", async (c) => {
   const result = streamText({
     model: model,
     system: systemPrompt,
-    messages: allMessages,
+    messages: messages,
     tools: {
       geocode: geocodeTool,
       forecast: forecastTool,
     },
-    stopWhen: stepCountIs(10),
-    temperature: 0.2,
+    stopWhen: stepCountIs(20),
+    temperature: 0.3,
+    toolChoice: "auto",
 
     onStepFinish({ toolCalls, toolResults, finishReason }) {
       if (toolCalls && toolCalls.length > 0) {
@@ -71,12 +69,12 @@ chat.post("/message", async (c) => {
 
     onFinish({ text }) {
       console.log(`🏁 [${requestId}] FINAL RESPONSE:`);
-      console.log(`"${text}`);
+      console.log(`"${text}"`);
       console.log(`${"=".repeat(50)}\n`);
     },
   });
 
-  return result.toTextStreamResponse();
+  return result.toUIMessageStreamResponse();
 });
 
 export default chat;
