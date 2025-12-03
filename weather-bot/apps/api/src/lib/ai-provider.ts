@@ -1,6 +1,6 @@
 import { createWorkersAI } from "workers-ai-provider";
 
-export const RECOMMENDED_MODEL = "@cf/meta/llama-3.1-8b-instruct" as any; // cambiare
+export const RECOMMENDED_MODEL = "@cf/meta/llama-3.1-8b-instruct" as any;
 export const WEATHER_BOT_SYSTEM_PROMPT = `You are WeatherBot, a friendly and conversational weather assistant.
 
 🚨 CRITICAL RULE - NEVER SHOW TECHNICAL DATA:
