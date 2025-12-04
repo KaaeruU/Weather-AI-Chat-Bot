@@ -15,7 +15,7 @@ export default function Home() {
 
   const { messages, status, sendMessage } = useChat({
     transport: new DefaultChatTransport({
-      api: 'http://127.0.0.1:8787/api/chat/message',
+      api: 'https://flavio-test.flaviogiovannipatti.workers.dev/api/chat/message',
     }),
   });
 
