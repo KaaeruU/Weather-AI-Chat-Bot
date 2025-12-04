@@ -49,19 +49,36 @@ IMPORTANT: The 'days' parameter starts from TODAY (day 0).
   }),
 
   execute: async ({ latitude, longitude, days }) => {
-    const url = new URL("https://api.open-meteo.com/v1/forecast");
-    url.searchParams.set("latitude", latitude.toFixed(4));
-    url.searchParams.set("longitude", longitude.toFixed(4));
-    url.searchParams.set(
-      "daily",
-      "temperature_2m_max,temperature_2m_min,weathercode,precipitation_probability_max"
-    );
-    url.searchParams.set("forecast_days", String(days));
-    url.searchParams.set("timezone", "auto");
+    const clampedDays = Math.min(Math.max(days, 1), 16);
+
+    const params = new URLSearchParams({
+      latitude: latitude.toFixed(4),
+      longitude: longitude.toFixed(4),
+      daily:
+        "temperature_2m_max,temperature_2m_min,weathercode,precipitation_probability_max",
+      forecast_days: String(clampedDays),
+      timezone: "auto",
+    });
+
+    const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
 
     try {
-      const res = await fetch(url.toString());
-      if (!res.ok) throw new Error("Weather API Error");
+      const res = await fetch(url, {
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "Mozilla/5.0 (compatible; YourApp/1.0)",
+        },
+      });
+
+      // Log per debug
+      console.log("Response status:", res.status);
+      console.log("Response headers:", Object.fromEntries(res.headers));
+
+      if (!res.ok) {
+        const errorBody = await res.text();
+        console.error("Error body:", errorBody);
+        throw new Error(`API Error ${res.status}: ${errorBody}`);
+      }
 
       const data = (await res.json()) as OpenMeteoResponse;
 

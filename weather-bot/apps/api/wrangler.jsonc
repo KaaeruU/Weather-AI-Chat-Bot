@@ -2,8 +2,7 @@
   "name": "flavio-test",
   "main": "src/index.ts",
   "compatibility_date": "2024-04-01",
-
-  // ADD THIS LINE using the ID you just found:
+  "compatibility_flags": ["nodejs_compat"],
 
   "ai": {
     "binding": "ai"

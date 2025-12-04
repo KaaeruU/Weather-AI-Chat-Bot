@@ -1,6 +1,6 @@
 export const buttonSample = [
-  { label: "Che tempo fa a Bologna?", variant: "default" },
-  { label: "Serve l'ombrello a Milano?", variant: "default" },
-  { label: "Che tempo fa nel weekend a Roma?", variant: "default" },
-  { label: "Domani vado a Firenze, come mi vesto?", variant: "default" },
+  { label: "What's the weather like this weekend in Rome?", variant: "default" },
+  { label: "Do I need an umbrella in Milan?", variant: "default" },
+  { label: "What's the weather like this weekend in London?", variant: "default" },
+  { label: "Is it cold in Turin?", variant: "default" },
 ];
