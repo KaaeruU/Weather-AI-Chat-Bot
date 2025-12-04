@@ -1,0 +1,8 @@
+{
+  "name": "weather-ai-chat-bot-monorepo",
+  "private": true,
+  "workspaces": [
+    "weather-app",
+    "weather-bot"
+  ]
+}
