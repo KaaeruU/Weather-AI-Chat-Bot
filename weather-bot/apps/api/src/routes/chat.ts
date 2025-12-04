@@ -28,7 +28,7 @@ chat.post("/message", async (c) => {
     return c.json({ error: "No messages provided" }, 400);
   }
 
-  const messages = convertToCoreMessages(uiMessages);
+  const messages = convertToModelMessages(uiMessages);
 
   const lastMessage = uiMessages[uiMessages.length - 1];
   console.log(
@@ -49,7 +49,7 @@ chat.post("/message", async (c) => {
       geocode: geocodeTool,
       forecast: forecastTool,
     },
-    stopWhen: stepCountIs(20),
+    stopWhen: stepCountIs(30),
     temperature: 0.3,
     toolChoice: "auto",
 

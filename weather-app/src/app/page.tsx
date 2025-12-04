@@ -15,7 +15,7 @@ export default function Home() {
 
   const { messages, status, sendMessage } = useChat({
     transport: new DefaultChatTransport({
-      api: 'http://127.0.0.1:8787/api/chat/message',
+      api: 'https://flavio-test.flaviogiovannipatti.workers.dev/api/chat/message',
     }),
   });
 
@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="flex min-h-[90vh] flex-col items-center justify-center p-24">
+      <main className="flex min-h-[90vh] flex-col items-center justify-center p-4 md:p-24 pb-32">
         <AnimatePresence mode="wait">
           {!selectedLabel && messages.length === 0 ? (
             <motion.div
@@ -35,24 +35,25 @@ export default function Home() {
               initial="initial"
               exit="exit"
               transition={transition}
-              className="flex items-center flex-col"
+              className="flex items-center flex-col w-full"
             >
-              <div className="mb-5">
+              <div className="mb-5 text-center">
                 <Text as={"label"} styledAs={"title"}>How Can I Help You Today?</Text>
               </div>
-              <div className="w-full max-w-3xl text-gray-700 text-center">
+              <div className="w-full max-w-3xl text-gray-700 text-center px-2">
                 <Text as={"p"} styledAs={"body"}>
                   Your AI weather assistant! Ask me about the current weather in real time.
                 </Text>
               </div>
-              <div className="grid grid-cols-8 mt-10 p-4 gap-4 w-full max-w-3xl">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 mt-10 p-4 gap-4 w-full max-w-3xl">
                 {buttonSample.map(({ label }) => (
                   <Button
                     label={label}
                     key={label}
                     isDisabled={status === 'streaming' || status === 'submitted'}
                     onClick={() => handlePresetClick(label)}
-                    className="col-span-4 border border-gray-300 rounded-full"
+                    className="w-full border border-gray-300 rounded-full"
                   />
                 ))}
               </div>
@@ -64,17 +65,17 @@ export default function Home() {
               initial="initial"
               animate="animate"
               transition={transition}
-              className="flex flex-col items-center justify-center p-8 w-full max-w-3xl"
+              className="flex flex-col items-center justify-center p-2 md:p-8 w-full max-w-3xl"
             >
-              <div className="flex flex-col w-full gap-4 max-h-[60vh] overflow-y-auto mb-4">
+              <div className="flex flex-col w-full gap-4 mb-4">
                 {messages.map((m) => (
                   <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`p-3 rounded-lg max-w-[80%] ${
+                    <div className={`p-3 rounded-lg max-w-[90%] md:max-w-[80%] ${
                         m.role === 'user' 
                         ? 'bg-blue-500 text-white' 
                         : 'bg-gray-100 text-gray-800'
                     }`}>
-                        <Text as={"p"} styledAs={"body"} className="text-lg">
+                        <Text as={"p"} styledAs={"body"} className="text-base md:text-lg">
                             {m.parts.map((part, i) => 
                               part.type === 'text' ? <span key={i}>{part.text}</span> : null
                             )}
@@ -82,10 +83,16 @@ export default function Home() {
                     </div>
                   </div>
                 ))}
-                
-                {(status === 'streaming' || status === 'submitted') && (
+                  {(status === "error") && (
+                    <div className="flex justify-start bg-red-500/10 p-3 rounded-lg">
+                        <Text as={"span"} styledAs={"label"} className="text-red-400 pl-2">
+                            An error occurred. Please try again.
+                        </Text>
+                    </div>)}
+                    
+                  {(status === 'streaming' || status === 'submitted') && (
                     <div className="flex justify-start">
-                        <Text as={"span"} styledAs={"label"} className="text-gray-400">
+                        <Text as={"span"} styledAs={"label"} className="text-gray-400 pl-2">
                             Thinking...
                         </Text>
                     </div>
@@ -96,14 +103,16 @@ export default function Home() {
         </AnimatePresence>
       </main>
       
-      <div className="min-w-full max-w-3xl mx-auto px-4 flex justify-center border border-t border-gray-300 fixed bottom-0 left-0 right-0 bg-white pb-4 pt-2">
-        <Form 
-          onSubmit={async (value: string) => {
-             if (!selectedLabel) setSelectedLabel("custom");
-             await sendMessage({ text: value });
-          }}
-          isDisabled={status === 'streaming' || status === 'submitted'}
-        />
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 pb-6 pt-4 px-4">
+        <div className="w-full max-w-3xl mx-auto flex justify-center">
+            <Form 
+              onSubmit={async (value: string) => {
+                 if (!selectedLabel) setSelectedLabel("custom");
+                 await sendMessage({ text: value });
+              }}
+              isDisabled={status === 'streaming' || status === 'submitted'}
+            />
+        </div>
       </div>
     </>
   );

@@ -19,7 +19,7 @@ export const Form = ({ onSubmit, isDisabled }: FormProps) => {
   };
 
   return (
-    <div className="w-1/2">
+    <div className="w-full">
       <form onSubmit={handleSubmit} className="w-full flex gap-2">
         <input
           type="text"

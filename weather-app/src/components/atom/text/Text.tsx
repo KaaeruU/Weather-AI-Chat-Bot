@@ -17,7 +17,7 @@ const Text = <T extends TextType>({
     button: "body-md",
     label: "label-regular",
     body: "body-regular",
-    title: "text-4xl font-bold",
+    title: "md:text-4xl text-2xl font-bold",
   };
   const styleKey = styledAs;
 

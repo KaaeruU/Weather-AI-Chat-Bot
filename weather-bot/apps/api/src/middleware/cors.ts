@@ -12,7 +12,8 @@ export const corsMiddleware = cors({
     // allow production domains
     if (origin.endsWith(".vercel.app")) return origin;
     if (origin.endsWith(".pages.dev")) return origin;
-    //if (origin === "https://www.real-domain.com") return origin;
+    if (origin === "https://flavio-test.flaviogiovannipatti.workers.dev")
+      return origin;
 
     return undefined;
   },
