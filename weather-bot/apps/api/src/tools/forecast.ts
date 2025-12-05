@@ -3,7 +3,6 @@ import { z } from "zod";
 import { getWeatherLabel } from "../utils/utils";
 import { OpenMeteoResponse } from "../types/types";
 
-// Changed locale to en-US for English output
 function getDayName(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", { weekday: "long" });
@@ -13,7 +12,6 @@ function getRelativeDay(dateString: string): string {
   const date = new Date(dateString);
   const today = new Date();
 
-  // Reset time to midnight to compare dates only
   today.setHours(0, 0, 0, 0);
   date.setHours(0, 0, 0, 0);
 
@@ -82,13 +80,11 @@ IMPORTANT: The 'days' parameter starts from TODAY (day 0).
 
       const data = (await res.json()) as OpenMeteoResponse;
 
-      // Build forecasts with clear labels
       const forecastList = data.daily.time.map((dateStr, index) => {
         const rainProb = data.daily.precipitation_probability_max[index] ?? 0;
         const dayName = getDayName(dateStr);
         const relativeDay = getRelativeDay(dateStr);
 
-        // Clear label: "TODAY - Monday (2024-01-15)"
         let label = relativeDay ? `${relativeDay} - ${dayName}` : dayName;
         label += ` (${dateStr})`;
 
