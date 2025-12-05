@@ -1,6 +1,7 @@
 # Weather AI Chat Bot 🌤️
 
 Un chatbot AI intelligente per ottenere informazioni meteo in tempo reale, costruito con Next.js e Cloudflare Workers.
+Check it out: http://weather-ai-chat-bot-1.vercel.app/
 
 ## ⚠️ Nota Importante su OpenMeteo
 
